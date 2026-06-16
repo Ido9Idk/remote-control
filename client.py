@@ -17,7 +17,8 @@ class client():
         self.mouse_coordinates = None
         self.mouse = Controller()
         self.screen_res = (1280, 720)
-        self.host_adress = "127.0.0.1"
+        # self.host_adress = "127.0.0.1"
+        self.host_adress = "192.168.68.61"
         self.tcp_port = 34467
         self.udp_port = 34468
         listener = mouse.Listener(
@@ -29,13 +30,13 @@ class client():
         print("argv: " + str(argv))
         print("executable: "+ str(executable))
         quoted_script_path = f'"{argv[0]}"'
-        execv(executable, [executable] + [quoted_script_path])  #fix here
+        execv(executable, [executable] + [quoted_script_path])
 
     def _connect_to_controller_tcp(self):
         while True:
             try:
                 self.client_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.client_tcp.connect(('127.0.0.1', self.tcp_port))
+                self.client_tcp.connect((self.host_adress, self.tcp_port))
                 while True:
                     header, data = self._recv_all(self.client_tcp)
                     if header == 0:
@@ -78,7 +79,7 @@ class client():
     def connect_to_controller_udp(self):
         try:
             self.client_udp_screen = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.client_udp_screen.connect(('127.0.0.1', self.udp_port))
+            self.client_udp_screen.connect((self.host_adress, self.udp_port))
 
         except Exception as err:
             print(err)

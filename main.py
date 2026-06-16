@@ -66,8 +66,10 @@ class main_prog():
         self.root.mainloop()
 
     def ctrl_clients_coords(self, coords):
+        x = coords.x * 1920//1280
+        y = coords.y * 1080//720
         print(fr"coords: {coords.x}, {coords.y}")
-        self.controller.send_mouse_coords(coords.x, coords.y)
+        self.controller.send_mouse_coords(x, y)
         new_coords = (coords.x, coords.y)
         self.coordinates.set(str(new_coords))
 

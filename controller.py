@@ -50,6 +50,10 @@ class remote_controller:
             try:
                 client, addr = self.tcp_server.accept()
                 self.active_client_tcp = client
+                check = client.recv(4)
+                if not check:
+                    self.is_online = False 
+
 
             except (OSError, socket.error) as err:
                 if not self.is_online:
