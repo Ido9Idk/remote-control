@@ -49,7 +49,7 @@ class client():
                         print(x, y)
                         self.mouse.position = (x, y)
                     elif header == 2:
-                        mouse_button = struct.unpack('!I', data)
+                        mouse_button = struct.unpack('!I', data)[0]
                         if mouse_button == 1:
                             mouse.press(Button.left)
                             mouse.release(Button.left)
