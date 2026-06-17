@@ -83,13 +83,12 @@ class remote_controller:
         elif header == 1:
             x, y = data
             payload = struct.pack('!I', x) + struct.pack('!I', y)
-        #mouse click
+        #mouse clicks
         elif header == 2:
             # LEFT_CLICK = 1
-            # RIGHT_CLICK = 2
-            # MIDDLE_CLICK = 3
+            # MIDDLE_CLICK = 2
+            # RIGHT_CLICK = 3
             payload = struct.pack('!I', data)
-
         #key pressed
         elif header == 3:
             data = str(data)

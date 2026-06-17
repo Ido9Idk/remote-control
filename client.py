@@ -54,11 +54,11 @@ class client():
                             self.mouse.press(Button.left)
                             self.mouse.release(Button.left)
                         if mouse_button == 2:
-                            self.mouse.press(Button.right)
-                            self.mouse.release(Button.right)
-                        if mouse_button == 3:
                             self.mouse.press(Button.middle)
                             self.mouse.release(Button.middle)
+                        if mouse_button == 3:
+                            self.mouse.press(Button.right)
+                            self.mouse.release(Button.right)
 
             except Exception as err:
                 print(err)
