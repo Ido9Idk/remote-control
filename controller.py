@@ -80,13 +80,21 @@ class remote_controller:
         if header == 0:
             payload = b''
         # mouse pos header
-        elif header == 1: 
+        elif header == 1:
             x, y = data
             payload = struct.pack('!I', x) + struct.pack('!I', y)
-        #key pressed
+        #mouse click
         elif header == 2:
+            # LEFT_CLICK = 1
+            # RIGHT_CLICK = 2
+            # MIDDLE_CLICK = 3
+            payload = struct.pack('!I', data)
+
+        #key pressed
+        elif header == 3:
             data = str(data)
             payload = data.encode('utf-8')
+
         print((struct.pack('!I', header) + struct.pack('!I', len(payload))))
         return (struct.pack('!I', header) + struct.pack('!I', len(payload)) + payload)
 
@@ -97,6 +105,13 @@ class remote_controller:
     def send_mouse_coords(self, x, y):
         if self.active_client_tcp:
             self.active_client_tcp.sendall(self.create_tcp_packet(1, (x, y)))
+
+    def send_mouse_clicks(self, button):
+        if not self.active_client_tcp:
+            return
+        print(f'clicked with mode: {button.num}')
+        self.create_tcp_packet(2, button.num)
+
 
     def start_threaded_tcp_input_server(self):
         self.tcp_socket_thread = threading.Thread(target=self._start_tcp_input_server)

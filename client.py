@@ -17,10 +17,12 @@ class client():
         self.mouse_coordinates = None
         self.mouse = Controller()
         self.screen_res = (1280, 720)
-        # self.host_adress = "127.0.0.1"
         self.host_adress = "192.168.68.61"
         self.tcp_port = 34467
         self.udp_port = 34468
+        self.connect_to_controller_tcp_threaded()
+        self.connect_to_controller_udp()
+        self.send_screen()
         listener = mouse.Listener(
         on_move=self.on_move,)
         listener.start()
@@ -46,6 +48,16 @@ class client():
                         x, y = struct.unpack('!2I', data)
                         print(x, y)
                         self.mouse.position = (x, y)
+                    elif header == 2:
+                        if data == 1:
+                            mouse.press(Button.left)
+                            mouse.release(Button.left)
+                        if data == 2:
+                            mouse.press(Button.right)
+                            mouse.release(Button.right)
+                        if data == 3:
+                            mouse.press(Button.middle)
+                            mouse.release(Button.middle)
 
             except Exception as err:
                 print(err)
@@ -109,8 +121,7 @@ class client():
             if len(file_bytes) > MAX_UDP_SIZE:
                 continue
 
-            self.client_udp_screen.sendto(file_bytes, ("127.0.0.1", self.udp_port))
-
+            self.client_udp_screen.sendto(file_bytes, (self.host_adress, self.udp_port))
             sleep(0.01)
 
 
@@ -119,6 +130,3 @@ class client():
 
 
 my_client = client()
-my_client.connect_to_controller_tcp_threaded()
-my_client.connect_to_controller_udp()
-my_client.send_screen()

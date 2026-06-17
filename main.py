@@ -44,11 +44,13 @@ class main_prog():
         options = ttk.Frame(main_frm, padding=0)
         options.pack(expand=True, fill='x')
 
+        # Start/Stop button
         self.start_stop_btn_text = tk.StringVar()
         self.start_stop_btn_text.set("Stop receiving") if self.is_online else self.start_stop_btn_text.set("Start receiving")
         toggle_server_btn = tk.Button(options, command= self.toggle_server, textvariable=self.start_stop_btn_text)
         toggle_server_btn.pack(side='left')
         
+        # Restart client button
         restart_client = tk.Button(options, command= self.controller.restart_client, text="Restart client")
         restart_client.pack(side='left')
 
@@ -57,15 +59,21 @@ class main_prog():
 
         ttk.Label(options, text="test").pack(side='left')
 
+        # Screen widget
         self.screen_label = tk.Label(main_frm)
         self.screen_label.pack()
+
+        # Handle events
         self.screen_label.bind("<Motion>", self.ctrl_clients_coords)
+        self.screen_label.bind("<Button>", self.controller.send_mouse_clicks)
 
         self.update_screen()
         self.update_coordinates()
         self.root.mainloop()
 
     def ctrl_clients_coords(self, coords):
+        if not self.controller.active_client_tcp:
+            return
         x = coords.x * 1920//1280
         y = coords.y * 1080//720
         print(fr"coords: {coords.x}, {coords.y}")
