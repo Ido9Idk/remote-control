@@ -51,14 +51,14 @@ class client():
                     elif header == 2:
                         mouse_button = struct.unpack('!I', data)[0]
                         if mouse_button == 1:
-                            mouse.press(Button.left)
-                            mouse.release(Button.left)
+                            self.mouse.press(Button.left)
+                            self.mouse.release(Button.left)
                         if mouse_button == 2:
-                            mouse.press(Button.right)
-                            mouse.release(Button.right)
+                            self.mouse.press(Button.right)
+                            self.mouse.release(Button.right)
                         if mouse_button == 3:
-                            mouse.press(Button.middle)
-                            mouse.release(Button.middle)
+                            self.mouse.press(Button.middle)
+                            self.mouse.release(Button.middle)
 
             except Exception as err:
                 print(err)
