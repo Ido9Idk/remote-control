@@ -49,13 +49,14 @@ class client():
                         print(x, y)
                         self.mouse.position = (x, y)
                     elif header == 2:
-                        if data == 1:
+                        mouse_button = struct.unpack('!I', data)
+                        if mouse_button == 1:
                             mouse.press(Button.left)
                             mouse.release(Button.left)
-                        if data == 2:
+                        if mouse_button == 2:
                             mouse.press(Button.right)
                             mouse.release(Button.right)
-                        if data == 3:
+                        if mouse_button == 3:
                             mouse.press(Button.middle)
                             mouse.release(Button.middle)
 

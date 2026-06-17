@@ -110,7 +110,7 @@ class remote_controller:
         if not self.active_client_tcp:
             return
         print(f'clicked with mode: {button.num}')
-        self.create_tcp_packet(2, button.num)
+        self.active_client_tcp.sendall(self.create_tcp_packet(2, button.num))
 
 
     def start_threaded_tcp_input_server(self):
