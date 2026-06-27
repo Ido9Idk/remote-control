@@ -10,6 +10,8 @@ class main_prog():
         self.coordinates = None
         self.root = None
         self.is_online = False
+        self.screen_size = (1280, 720)
+        self.targets_screen_res = (1280, 720)
         self.create_gui()
 
     def toggle_server(self):
@@ -60,42 +62,65 @@ class main_prog():
         ttk.Label(options, text="test").pack(side='left')
 
         # Screen widget
-        self.screen_label = tk.Label(main_frm)
-        self.screen_label.pack()
+        self.canvas_width = 1280
+        self.canvas_height = 720
+        self.screen_canvas = tk.Canvas(main_frm, width=self.canvas_width, height=self.canvas_height)
+        self.screen_canvas.pack()
 
         # Handle events
-        self.screen_label.bind("<Motion>", self.ctrl_clients_coords)
-        self.screen_label.bind("<Button>", self.controller.send_mouse_clicks)
+        self.screen_canvas.bind("<Motion>", self.convert_coords)
+        self.screen_canvas.bind("<Button>", self.controller.send_mouse_clicks)
 
         self.update_screen()
         self.update_coordinates()
         self.root.mainloop()
 
-    def ctrl_clients_coords(self, coords):
+    def convert_coords(self, coords):
         if not self.controller.active_client_tcp:
             return
-        x = coords.x * 1920//1280
-        y = coords.y * 1080//720
-        print(fr"coords: {coords.x}, {coords.y}")
+        
+        #find where the image starts
+        margin_x = (self.canvas_width - self.screen_size[0])//2
+        margin_y = (self.canvas_height - self.screen_size[1])//2
+        
+        x = coords.x - margin_x
+        y = coords.y - margin_y
+        if x<0 or y<0 or x>=self.screen_size[0] or y>=self.screen_size[1]:
+            return
+        
+        print(fr"canvas coords: {coords.x}, {coords.y}")
+        print(fr"img coords: {x}, {y}")
+        print(f"targets_screen_res: {self.targets_screen_res}")
+        print(f"screen size: {self.screen_size}")
+
+        x =  int(x * (self.targets_screen_res[0]/self.screen_size[0]))
+        y = int(y * (self.targets_screen_res[1]/self.screen_size[1]))
+
+        print(fr"coords_after_scale: {x}, {y}")
         self.controller.send_mouse_coords(x, y)
-        new_coords = (coords.x, coords.y)
-        self.coordinates.set(str(new_coords))
+        self.coordinates.set(f"coords: {coords.x}, {coords.y}")
 
 
     def update_coordinates(self):
-            new_coords = self.controller.get_coords()
-            self.coordinates.set(str(new_coords))
+            # new_coords = self.controller.get_coords()
+            # self.coordinates.set(str(new_coords))
             
             self.update_coords_sceduler = self.root.after(50, self.update_coordinates)
 
     def update_screen(self):
         img = self.controller.get_screen()
-        screen = ImageTk.PhotoImage(image=img)
-        self.screen_label.configure(image=screen)
-        self.screen_label.pack()
-        self.screen_label.image = screen
+        if img: 
+            self.targets_screen_res = (img.width, img.height) # the targets screen res in order to scale it back later
+            img.thumbnail((self.canvas_width, self.canvas_height))
+            screen_tk_image = ImageTk.PhotoImage(image=img)
+            self.screen_size = (screen_tk_image.width(), screen_tk_image.height()) # the actual size of the targets screen in the canvas
 
-        self.update_screen_sceduler = self.screen_label.after(50, self.update_screen)
+            self.screen_canvas.delete("all")
+            self.screen_canvas.create_image((self.canvas_width // 2, self.canvas_height // 2), image=screen_tk_image)
+            self.screen_canvas.pack()
+            self.screen_canvas.image = screen_tk_image
+
+        self.update_screen_sceduler = self.screen_canvas.after(50, self.update_screen)
 
 
 main_program = main_prog()

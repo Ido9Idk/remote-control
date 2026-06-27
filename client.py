@@ -110,7 +110,7 @@ class client():
                 cursor = ImageDraw.Draw(im)
                 cursor.circle(self.mouse_coordinates, 5, fill='#089bbf', outline='#076b85', width=1)
 
-            im.thumbnail(self.screen_res)
+            # im.thumbnail(self.screen_res)
 
 
             virtual_file = BytesIO()

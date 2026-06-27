@@ -164,7 +164,7 @@ class remote_controller:
         if not self.screen:
             return self.fallback_img
         else:
-            return self.screen
+            return self.screen.copy()
 
     def on_move(self, x, y):
         print(f'\rPointer moved to {x, y}', end='')
